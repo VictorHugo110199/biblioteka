@@ -20,5 +20,8 @@ class Book(models.Model):
     author = models.CharField(max_length=200)
     number_pages = models.PositiveIntegerField()
     gender = models.CharField(max_length=50, choices=Genero.choices, default=Genero.DEFAULT)
-    users = models.ManyToManyField("users.User", related_name='following')
+
+class Following (models.Model):
+    book = models.ForeignKey("livros.Book", on_delete=models.RESTRICT)
+    user = models.ForeignKey("users.User", on_delete=models.RESTRICT)
 

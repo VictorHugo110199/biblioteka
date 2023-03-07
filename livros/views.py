@@ -8,12 +8,14 @@ from .permissions import isAdminOrGetOnly
 class BookView(ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
     permission_classes = [isAdminOrGetOnly]
     authentication_classes = [JWTAuthentication]
 
 class BookDetailsView(RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    
     permission_classes = [isAdminOrGetOnly]
     authentication_classes = [JWTAuthentication]
 
