@@ -18,8 +18,7 @@ class Book(models.Model):
     
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
-    number_pages = models.IntegerField()
+    number_pages = models.PositiveIntegerField()
     gender = models.CharField(max_length=50, choices=Genero.choices, default=Genero.DEFAULT)
     users = models.ManyToManyField("users.User", related_name='following')
 
-# Create your models here.
