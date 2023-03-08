@@ -5,6 +5,8 @@ from .models import Book
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import isAdminOrGetOnly
 
+
+
 class BookView(ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
