@@ -1,5 +1,4 @@
 from django.db import models
-import uuid
 
 class Genero(models.TextChoices):
     DRAMA = "DRAMA"
@@ -14,7 +13,9 @@ class Genero(models.TextChoices):
     DEFAULT = "NEUTRO"
 
 class Book(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    class Meta:
+        ordering = ['id']
+        
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     number_pages = models.PositiveIntegerField()
