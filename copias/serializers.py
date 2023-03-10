@@ -1,31 +1,25 @@
 from rest_framework import serializers
-from .models import Copy, Borrow
 from rest_framework.validators import UniqueValidator
+from .models import Copy
+from livros.models import Book
+from django.forms.models import model_to_dict
 
 class CopySerializer(serializers.ModelSerializer):
+    book = serializers.SerializerMethodField(read_only=True)
 
-    # books_id = serializers.CharField(validators = [
-    #     UniqueValidator(
-    #         queryset=Copy.objects.all(),
-    #         message='This book already has a copy.'
-    #     )]
-    # )
+    books_id = serializers.CharField(validators = [
+        UniqueValidator(
+            queryset=Copy.objects.all(),
+            message='This book already has a copy.'
+        )]
+    )
+
     class Meta:
         model = Copy
-        fields = ["id", "amount", "books_id", "copy_booked", "is_available"]
-
-class BorrowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Borrow
-        fields = ["id", "user", "copy", "borrowing_start_date", "return_date", "is_returned"]
-        read_only_fields = ["id", "user", "copy", "borrowing_start_date", "return_date", "is_returned"]
-    
-    def update(self, instance, validated_data):
-        copy = Copy.objects.filter(pk=instance.copy.id).first()
-        copy.amount += 1
-        copy.save()
-
-        instance.is_returned=True
-        instance.save()
+        fields = ["id", "books_id", "amount", "copy_booked", "is_available", "book"]
         
-        return instance
+    def get_book(self, obj) -> str:
+        found_book = Book.objects.get(id=obj.books_id)
+        returned_book = model_to_dict(found_book)
+        returned_book.pop('following')
+        return returned_book
