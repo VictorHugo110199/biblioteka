@@ -1,34 +1,32 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView, UpdateAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from livros.permissions import isAdminOrGetOnly
+from django.shortcuts import get_object_or_404
+from livros.models import Book
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from users.permissions import IsCollaborator
 from .serializers import CopySerializer, BorrowSerializer
 from .models import Copy, Borrow
 import datetime
 from rest_framework.views import status
 
-class CopyView (CreateAPIView):
+class CopyView(ListCreateAPIView):
     queryset = Copy.objects.all()
     serializer_class = CopySerializer
 
+    def perform_create(self, serializer):
+        book = get_object_or_404(Book, pk=self.request.data['books_id'])
+        serializer.save(books = book)
+
+    permission_classes = [isAdminOrGetOnly]
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsCollaborator]
 
-class CopyDetailView (RetrieveUpdateDestroyAPIView):
-    queryset = Copy.objects.all()
-    serializer_class = CopySerializer
-
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsCollaborator]
-
-
-class CopyListView (ListCreateAPIView):
+class CopyDetailsView(RetrieveUpdateDestroyAPIView):
     queryset = Copy.objects.all()
     serializer_class = CopySerializer
     
+    permission_classes = [isAdminOrGetOnly]
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsCollaborator]
 
 class BorrowView(ListCreateAPIView):
     serializer_class = BorrowSerializer

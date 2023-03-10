@@ -1,10 +1,18 @@
 from rest_framework import serializers
 from .models import Copy, Borrow
+from rest_framework.validators import UniqueValidator
 
 class CopySerializer(serializers.ModelSerializer):
+
+    # books_id = serializers.CharField(validators = [
+    #     UniqueValidator(
+    #         queryset=Copy.objects.all(),
+    #         message='This book already has a copy.'
+    #     )]
+    # )
     class Meta:
         model = Copy
-        fields = ["amount", "books"]
+        fields = ["id", "amount", "books_id", "copy_booked", "is_available"]
 
 class BorrowSerializer(serializers.ModelSerializer):
     class Meta:
