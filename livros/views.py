@@ -29,12 +29,14 @@ class BookDetailsView(RetrieveUpdateDestroyAPIView):
 class FollowingView(APIView):
     authentication_classes = [JWTAuthentication]
 
-    def post(self, request: Request, book_id: int, user_id:int) -> Response:
+    def post(self, request: Request, book_id: int) -> Response:
+        user_requester = request.user.id
+
         book = get_object_or_404(Book, id=book_id)
-        user = get_object_or_404(User, id=user_id)
+        user = get_object_or_404(User, id=user_requester)
 
         book.following.add(user)
         send_notification(user, book)
 
-        return Response(status=status.HTTP_201_CREATED)
+        return Response({"message": f"Você está seguindo o livro {book.title}!"}, status.HTTP_201_CREATED)
 
