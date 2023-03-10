@@ -5,7 +5,9 @@ class Copy(models.Model):
         ordering = ['id']
     
     amount = models.IntegerField()
+    copy_booked = models.IntegerField(default=0)
     books = models.OneToOneField("livros.Book", on_delete=models.CASCADE)
+    is_available = models.BooleanField(default=True)
 
 
 class Borrow (models.Model):
