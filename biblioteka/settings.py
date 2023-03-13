@@ -111,7 +111,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
     production_db = dj_database_url.config(default=DATABASE_URL)
-    DATABASES.update(production_db)
+    DATABASES["default"].update(production_db)
     DEBUG = False
 
 if not DEBUG:
