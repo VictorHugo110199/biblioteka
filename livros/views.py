@@ -1,7 +1,6 @@
 from rest_framework.views import APIView, Response, Request, status
-from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .serializers import BookSerializer, BookFollowSerializer
+from .serializers import BookSerializer
 from .models import Book
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import isAdminOrGetOnly
@@ -38,21 +37,9 @@ class FollowingView(APIView):
         send_notification(user, book)
 
         return Response({"message": f"Você está seguindo o livro {book.title}!"}, status.HTTP_201_CREATED)
-    
-    def delete(self, request: Request, book_id:int) -> Response:
-
-        user_requester = request.user.id
-
-        book = get_object_or_404(Book, id=book_id)
-        user = get_object_or_404(User, id=user_requester)
-
-        book.following.remove(user)
-        send_notification(user, book)
-
-        return Response(status.HTTP_204_NO_CONTENT)
 
 
-class FollowingDetailView(APIView):
+class GetFollowingView(APIView):
     authentication_classes= [JWTAuthentication]
 
     def get(self, request:Request) -> Response:
@@ -62,7 +49,20 @@ class FollowingDetailView(APIView):
             following=user
         )
 
-        serializer = BookFollowSerializer(book_followed, many=True)
+        serializer = BookSerializer(book_followed, many=True)
 
-        return Response(serializer.data, status.HTTP_200_OK)
+        return Response({"user_id": user.id, "books_followed": serializer.data}, status.HTTP_200_OK)
     
+
+class UnfollowView(APIView):
+    authentication_classes= [JWTAuthentication]
+
+    def delete(self, request: Request, book_id:int) -> Response:
+
+        book = get_object_or_404(Book, id=book_id)
+        user = get_object_or_404(User, id=request.user.id)
+
+        book.following.remove(user)
+        send_notification(user, book)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
