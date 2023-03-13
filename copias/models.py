@@ -5,7 +5,9 @@ class Copy(models.Model):
         ordering = ['id']
     
     amount = models.IntegerField()
-    books = models.OneToOneField("livros.Book", on_delete=models.CASCADE)
+    copy_booked = models.IntegerField(default=0)
+    books = models.ForeignKey("livros.Book", on_delete=models.RESTRICT, related_name="copy")
+    is_available = models.BooleanField(default=True)
 
 class Borrowing (models.Model):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="user_borrowed")
