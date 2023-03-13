@@ -12,5 +12,13 @@ class BookSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Book
+        fields = ["id", "title", "author", "number_pages", "gender", "following"]
+        extra_kwargs = {"following":{"read_only": True}}
+
+class BookFollowSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Book
         fields = ["id", "title", "author", "number_pages", "gender"]
+
     
