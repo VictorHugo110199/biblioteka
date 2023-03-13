@@ -14,10 +14,12 @@ from pathlib import Path
 from datetime import timedelta
 import os
 import dotenv
+from django.core.management.utils import get_random_secret_key
+import dj_database_url
 
 dotenv.load_dotenv()
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", False)
 
 ALLOWED_HOSTS = []
 
@@ -61,6 +63,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -95,7 +98,6 @@ WSGI_APPLICATION = "biblioteka.wsgi.application"
 
 DATABASES = {
   "default": {
-      # O django já contém a instrução para rodar o motor psycopg2 do postgres
       "ENGINE": "django.db.backends.postgresql",
       "NAME": os.getenv("POSTGRES_DB"),
       "USER": os.getenv("POSTGRES_USER"),
@@ -105,6 +107,16 @@ DATABASES = {
   }
 }
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    production_db = dj_database_url.config(default=DATABASE_URL)
+    DATABASES.update(production_db)
+    DEBUG = False
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
