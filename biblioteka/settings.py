@@ -35,6 +35,10 @@ DEBUG = os.getenv("DEBUG", False)
 
 ALLOWED_HOSTS = ["entrega-biblioteka-production.up.railway.app/", "0.0.0.0"]
 
+RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
+
+if RAILWAY_STATIC_URL:
+    ALLOWED_HOSTS += [RAILWAY_STATIC_URL, "0.0.0.0"]
 
 # Application definition
 
@@ -110,9 +114,11 @@ DATABASES = {
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    production_db = dj_database_url.config(default=DATABASE_URL)
-    DATABASES["default"].update(production_db)
+    db_from_env = dj_database_url.config(
+        default=DATABASE_URL, conn_max_age=500, ssl_require=True)
+    DATABASES['default'].update(db_from_env)
     DEBUG = False
+    
 
 if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
