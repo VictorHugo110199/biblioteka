@@ -9,11 +9,11 @@ class Copy(models.Model):
     books = models.ForeignKey("livros.Book", on_delete=models.RESTRICT, related_name="copy")
     is_available = models.BooleanField(default=True)
 
-class Borrowing (models.Model):
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="user_borrowed")
-    copies = models.ForeignKey("copias.Copy", on_delete=models.CASCADE, related_name="copy_borrowed")
+
+class Borrow (models.Model):
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="borrows")
+    copy = models.ForeignKey("copias.Copy", on_delete=models.CASCADE, related_name="borrows")
     borrowing_start_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(null=True)
     is_returned = models.BooleanField(default=False)
 
-# Create your models here.
