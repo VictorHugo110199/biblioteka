@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False)
 
-ALLOWED_HOSTS = ["entrega-biblioteka-production.up.railway.app/", "0.0.0.0"]
+ALLOWED_HOSTS = ["entrega-biblioteka-production-ffab.up.railway.app/", "0.0.0.0", "localhost"]
 
 RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
 
