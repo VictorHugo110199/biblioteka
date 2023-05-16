@@ -11,6 +11,8 @@ Visão geral do projeto, um pouco das tecnologias usadas.
 - Pytest-django
 - Pytest-testdox
 - Sqlite
+- PyJWT
+- Python-dotenv
 
 ## Como rodar os testes localmente
 
